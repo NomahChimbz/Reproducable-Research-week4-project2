@@ -1,13 +1,17 @@
+install.packages("tidyverse")
+install.packages("readxl")
 install.packages("dplyr")
 library(dplyr)
-dataset<-download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2","/cloud/project/storm_dataset")
+library(readxl)
+library(tidyverse)
 
-storm_data <- read.csv(bzfile("storm_dataset"))
-head(dataset)
+#import storm_data
+storm_data <- read_excel("C:/Users/nchimbwero/Documents/New folder (2)/repdata_data_StormData.xlsx", sheet = 1)
+head(storm_data)
+repdata_data_StormData
 
-
-str(dataset)
-names(dataset)
+str(storm_data)
+names(storm_data)
 
 #1)  Across the United States, which types of events (as indicated in the EVTYPE 
 #variable) are most harmful with respect to population health?
@@ -17,22 +21,22 @@ names(dataset)
 #We have to aggregate both one by one the compare
 
 #a) aggregating EVTYPE wrt injuries
-total_injuries <- aggregate(INJURIES~EVTYPE, dataset, sum)
+total_injuries <- aggregate(INJURIES~EVTYPE, storm_data, sum)
 total_injuries <- arrange(total_injuries, desc(INJURIES))
-total_injuries <- total_injuries[1:20, ]
-total_injuries
+total <- total_injuries[1:20, ]
+View(total_injuries)
 
 #b) aggregating EVTYPE wrt fatalities
-total_fatalities <- aggregate(FATALITIES~EVTYPE,dataset, sum)
+total_fatalities <- aggregate(FATALITIES~EVTYPE,storm_data, sum)
 total_fatalities <- arrange(total_fatalities, desc(FATALITIES))
-total_fatalities <- total_fatalities[1:20, ]
-total_fatalities
+totals <- total_fatalities[1:20, ]
+totals
 
 barplot(t(totals[,-1]))
 
 par(mfrow = c(1, 2), mar = c(15, 4, 3, 2), mgp = c(3, 1, 0), cex = 0.8)
 barplot(totals$FATALITIES, las = 3, names.arg = totals$EVTYPE, main = "Weather Events With\n The Top 10 Highest Fatalities", ylab = "Number of Fatalities", col = totals$FATALITIES)
-barplot(totals$INJURIES, las = 3, names.arg =totals$EVTYPE, main = "Weather Events With\n The Top 10 Highest Injuries", ylab = "Number of Injuries", col = totals$FATALITIES)
+barplot(total$INJURIES, las = 3, names.arg =total$EVTYPE, main = "Weather Events With\n The Top 10 Highest Injuries", ylab = "Number of Injuries", col = totals$FATALITIES)
 
 
 
@@ -78,7 +82,7 @@ healthChart
 
 # we have property Damage and crop damage 
 # Aggregate Data for Property Damage
-propdmg <- aggregate(PROPDMG ~ EVTYPE, data = dataset, FUN = sum)
+propdmg <- aggregate(PROPDMG ~ EVTYPE, data = storm_data, FUN = sum)
 propdmg <- propdmg[order(propdmg$PROPDMG, decreasing = TRUE), ]
 # 10 most harmful causes of injuries
 propdmgMax <- propdmg[1:10, ]
@@ -86,7 +90,7 @@ print(propdmgMax)
 
 
 #Aggregate Data for Crop Damage
-cropdmg <- aggregate(CROPDMG ~ EVTYPE, data = dataset, FUN = sum)
+cropdmg <- aggregate(CROPDMG ~ EVTYPE, data = storm_data, FUN = sum)
 cropdmg <- cropdmg[order(cropdmg$CROPDMG, decreasing = TRUE), ]
 # 10 most harmful causes of injuries
 cropdmgMax <- cropdmg[1:10, ]
